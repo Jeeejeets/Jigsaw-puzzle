@@ -7,14 +7,28 @@
       *{
         box-sizing: border-box;
       }
+      body{
+        position: relative;
+        height: 98vh;
+        background-color: #333;
+        z-index: -10;
+      }
+      #ukladanka{
+        z-index: 1 !important;
+      }
+      #guideImage{
+        z-index: 0 !important;
+        position: absolute;
+      }
     </style>
     <script type="text/javascript" src="script.js">
 
     </script>
   </head>
 
-  <body onload="init();" style="height: 98vh; background: url('https://www.planwallpaper.com/static/images/6909249-black-hd-background.jpg')">
-    <canvas id="ukladanka" width="800" height="500">
+  <body onload="init();">
+    <canvas id="guideImage"></canvas>
+    <canvas id="ukladanka">
       Twoja przeglądarka nie wspiera tej treści
     </canvas>
   </body>

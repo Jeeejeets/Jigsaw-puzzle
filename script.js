@@ -7,6 +7,8 @@ const PUZZLE_TIMEOUT               = 180;           //Time in seconds
 var canvas;
 var stage;
 var img;
+var guideCanvas;
+var guideStage;
 var pieces;
 var puzzleWidth;
 var puzzleHeight;
@@ -35,6 +37,7 @@ function onImage(e) {
 }
 
 function setCanvas() {
+  //set main puzzle canvas
   canvas = document.getElementById('ukladanka');
   stage  = canvas.getContext('2d');
   var parentWidth = canvas.parentElement.clientWidth;
@@ -44,6 +47,12 @@ function setCanvas() {
   canvas.style.border = "1px solid black";
   horizontalBeginning = canvas.width / 2 - puzzleWidth / 2;
   verticalBeginning = canvas.height /2 - puzzleHeight /2;
+
+  //set guide image canvas
+  guideImage = document.getElementById('guideImage');
+  guideStage  = guideImage.getContext('2d');
+  guideImage.width = parentWidth;
+  guideImage.height = parentHeight;
 }
 
 
@@ -84,26 +93,24 @@ function buildPieces() {
 //declare game mechanics functions
 
 function shufflePuzzle() {
-  pieces = shuffleArray(pieces);
-  stage.clearRect(0, 0, puzzleWidth, puzzleHeight);
+  stage.clearRect(0, 0, canvas.width, canvas.height);
   var i;
   var piece;
-  var xPos = horizontalBeginning;
-  var yPos = verticalBeginning;
   for(i = 0;i < pieces.length;i++){
     piece = pieces[i];
-    piece.xPos = xPos;
-    piece.yPos = yPos;
+    var xPos = Math.floor(Math.random() * (canvas.width - pieceWidth));
+    var yPos = Math.floor(Math.random() * (canvas.height - pieceHeight));
     stage.drawImage(img, piece.sx, piece.sy, pieceWidth, pieceHeight, xPos, yPos, pieceWidth, pieceHeight);
     stage.strokeRect(xPos, yPos, pieceWidth,pieceHeight);
-    xPos += pieceWidth;
-    if(xPos >= puzzleWidth + horizontalBeginning){
-        xPos = horizontalBeginning;
-        yPos += pieceHeight;
-      }
   }
   startTheClock(PUZZLE_TIMEOUT);
   document.onmousedown = onPuzzleClick;
+  drawGuideImage();
+}
+
+function drawGuideImage() {
+  guideStage.globalAlpha = 0.2;
+  guideStage.drawImage(img, 0, 0, puzzleWidth, puzzleHeight, horizontalBeginning, verticalBeginning, puzzleWidth, puzzleHeight);
 }
 
 function startTheClock(time) {
