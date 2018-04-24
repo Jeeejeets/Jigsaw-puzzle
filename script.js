@@ -1,5 +1,5 @@
-const NUMBER_OF_PIECES_HORIZONTAL  = 6;
-const NUMBER_OF_PIECES_VERTICAL    = 4;
+const NUMBER_OF_PIECES_HORIZONTAL  = 10;
+const NUMBER_OF_PIECES_VERTICAL    = 6;
 const PUZZLE_HOVER_TINT            = '#E93D8F';
 const PUZZLE_TIMEOUT               = 180;           //Time in seconds
 
@@ -121,6 +121,7 @@ function shuffleArray(o){
 }
 
 function onPuzzleClick(e) {
+
     //layers are position properties too
     if(e.layerX || e.layerX == 0){
       mouse.x = e.layerX - canvas.offsetLeft;
@@ -133,7 +134,7 @@ function onPuzzleClick(e) {
     if(currentPiece != null){
       stage.clearRect(currentPiece.xPos, currentPiece.yPos, pieceWidth, pieceHeight);
       stage.save();
-      stage.globalAlpha - .9;
+      stage.globalAlpha = .9;
       stage.drawImage(img, currentPiece.sx, currentPiece.sy, pieceWidth, pieceHeight, mouse.x - (pieceWidth / 2), mouse.y - (pieceHeight / 2), pieceWidth, pieceHeight);
       stage.restore();
       document.onmousemove = updatePuzzle;
@@ -156,6 +157,8 @@ function checkPieceClicked(){
 }
 
 function updatePuzzle(e) {
+
+  //określanie pozycji kursora
   currentDropPiece = null;
   if(e.layerX || e.layerX == 0){
     mouse.x = e.layerX - canvas.offsetLeft;
@@ -164,7 +167,9 @@ function updatePuzzle(e) {
     mouse.x = e.offsetX - canvas.offsetLeft;
     mouse.y = e.offsetY - canvas.offsetTop;
   }
-  stage.clearRect(0, 0, puzzleWidth, puzzleHeight);
+
+  //Podsiwetlanie kafelka, rysowanie kafelków nieprzeciąganych od nowa
+  stage.clearRect(0, 0, canvas.width, canvas.height);
   var i;
   var piece;
   for(i = 0; i < pieces.length; i++){
@@ -187,6 +192,8 @@ function updatePuzzle(e) {
       }
     }
   }
+
+  //rysowanie kafelka przeciąganego
   stage.save();
   stage.globalAlpha = .6;
   stage.drawImage(img, currentPiece.sx, currentPiece.sy, pieceWidth, pieceHeight, mouse.x - (pieceWidth / 2), mouse.y - (pieceHeight / 2), pieceWidth, pieceHeight);
@@ -203,12 +210,15 @@ function pieceDropped(e) {
     currentPiece.yPos = currentDropPiece.yPos;
     currentDropPiece.xPos = tmp.xPos;
     currentDropPiece.yPos = tmp.yPos;
+  } else {
+    currentPiece.xPos = mouse.x - pieceWidth /2;
+    currentPiece.yPos = mouse.y - pieceHeight/2;
   }
   resetPuzzleAndCheckWin();
 }
 
 function resetPuzzleAndCheckWin() {
-  stage.clearRect(0, 0, puzzleWidth, puzzleHeight);
+  stage.clearRect(0, 0, canvas.width, canvas.height);
   var gameWin = true;
   var i;
   var piece;
