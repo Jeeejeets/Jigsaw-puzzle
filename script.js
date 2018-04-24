@@ -210,7 +210,5 @@ function resetPuzzleAndCheckWin() {
       gameWin = false;
     }
   }
-  if(gameWin){
-    alert("Wygrana kuhfa!!!");
-  }
+  return gameWin;
 }
