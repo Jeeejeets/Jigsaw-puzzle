@@ -1,7 +1,7 @@
 const NUMBER_OF_PIECES_HORIZONTAL  = 6;
-const NUMBER_OF_PIECES_VERTICAL  = 4;
-const PUZZLE_HOVER_TINT = '#E93D8F';
-const PUZZLE_TIMEOUT    = 180;           //Time in seconds
+const NUMBER_OF_PIECES_VERTICAL    = 4;
+const PUZZLE_HOVER_TINT            = '#E93D8F';
+const PUZZLE_TIMEOUT               = 180;           //Time in seconds
 
 //Declare variables
 var canvas;
@@ -15,6 +15,8 @@ var pieceHeight;
 var currentPiece;
 var currentDropPiece;
 var mouse;
+var horizontalBeginning;
+var verticalBeginning;
 
 //Declare game preparing functions
 function init(){
@@ -24,7 +26,7 @@ function init(){
 }
 
 function onImage(e) {
-  pieceWidth = Math.floor(img.width / NUMBER_OF_PIECES_HORIZONTAL);
+  pieceWidth = Math.floor(img.width  / NUMBER_OF_PIECES_HORIZONTAL);
   pieceHeight = Math.floor(img.height / NUMBER_OF_PIECES_VERTICAL);
   puzzleWidth = pieceWidth * NUMBER_OF_PIECES_HORIZONTAL;
   puzzleHeight = pieceHeight * NUMBER_OF_PIECES_VERTICAL;
@@ -35,31 +37,29 @@ function onImage(e) {
 function setCanvas() {
   canvas = document.getElementById('ukladanka');
   stage  = canvas.getContext('2d');
-  canvas.width = puzzleWidth;
-  canvas.height = puzzleHeight;
+  var parentWidth = canvas.parentElement.clientWidth;
+  var parentHeight = canvas.parentElement.clientHeight;
+  canvas.width = parentWidth;
+  canvas.height = parentHeight;
   canvas.style.border = "1px solid black";
+  horizontalBeginning = canvas.width / 2 - puzzleWidth / 2;
+  verticalBeginning = canvas.height /2 - puzzleHeight /2;
 }
+
+
 
 function initPuzzle() {
   pieces = [];
   mouse = {x:0, y:0};
   currentPiece = null;
   currentDropPiece = null;
-  stage.drawImage(img, 0, 0, puzzleWidth, puzzleHeight, 0, 0, puzzleWidth, puzzleHeight);
+  stage.drawImage(img, 0, 0, puzzleWidth, puzzleHeight, horizontalBeginning, verticalBeginning, puzzleWidth, puzzleHeight);
   createTitle('Click to start the puzzle');
   buildPieces();
 }
 
 function createTitle(message) {
-  stage.fillStyle = "black";
-  stage.globalAlpha = .4;
-  stage.fillRect(100, puzzleHeight - 40, puzzleWidth - 200, 40);
-  stage.fillStyle = "white";
-  stage.globalAlpha = 1;
-  stage.textAlign = "center";
-  stage.textBaseline = "middle";
-  stage.font = "20px Arial";
-  stage.fillText(message, puzzleWidth / 2, puzzleHeight - 20);
+
 }
 
 function buildPieces() {
@@ -88,8 +88,8 @@ function shufflePuzzle() {
   stage.clearRect(0, 0, puzzleWidth, puzzleHeight);
   var i;
   var piece;
-  var xPos = 0;
-  var yPos = 0;
+  var xPos = horizontalBeginning;
+  var yPos = verticalBeginning;
   for(i = 0;i < pieces.length;i++){
     piece = pieces[i];
     piece.xPos = xPos;
@@ -97,12 +97,22 @@ function shufflePuzzle() {
     stage.drawImage(img, piece.sx, piece.sy, pieceWidth, pieceHeight, xPos, yPos, pieceWidth, pieceHeight);
     stage.strokeRect(xPos, yPos, pieceWidth,pieceHeight);
     xPos += pieceWidth;
-    if(xPos >= puzzleWidth){
-        xPos = 0;
+    if(xPos >= puzzleWidth + horizontalBeginning){
+        xPos = horizontalBeginning;
         yPos += pieceHeight;
       }
   }
+  startTheClock(PUZZLE_TIMEOUT);
   document.onmousedown = onPuzzleClick;
+}
+
+function startTheClock(time) {
+  stage.fillStyle = "white";
+  stage.globalAlpha = 1;
+  stage.textAlign = "center";
+  stage.textBaseline = "middle";
+  stage.font = "20px Arial";
+
 }
 
 function shuffleArray(o){
