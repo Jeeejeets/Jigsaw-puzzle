@@ -1,6 +1,6 @@
 const NUMBER_OF_PIECES_HORIZONTAL  = 6;
 const NUMBER_OF_PIECES_VERTICAL  = 4;
-const PUZZLE_HOVER_TINT = '#009900';
+const PUZZLE_HOVER_TINT = '#E93D8F';
 const PUZZLE_TIMEOUT    = 180;           //Time in seconds
 
 //Declare variables
@@ -78,7 +78,7 @@ function buildPieces() {
       yPos += pieceHeight;
     }
   }
-  shufflePuzzle();
+  document.onmousedown = shufflePuzzle;
 }
 
 //declare game mechanics functions
@@ -102,10 +102,115 @@ function shufflePuzzle() {
         yPos += pieceHeight;
       }
   }
-  // document.onmousedown = onPuzzleClick;
+  document.onmousedown = onPuzzleClick;
 }
 
 function shuffleArray(o){
     for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
     return o;
+}
+
+function onPuzzleClick(e) {
+    //layers are position properties too
+    if(e.layerX || e.layerX == 0){
+      mouse.x = e.layerX - canvas.offsetLeft;
+      mouse.y = e.layerY - canvas.offsetTop;
+    } else if (e.offsetX || e.offsetX == 0){
+      mouse.x = e.offsetX - canvas.offsetLeft;
+      mouse.y = e.offsetY - canvas.offsetTop;
+    }
+    currentPiece = checkPieceClicked();
+    if(currentPiece != null){
+      stage.clearRect(currentPiece.xPos, currentPiece.yPos, pieceWidth, pieceHeight);
+      stage.save();
+      stage.globalAlpha - .9;
+      stage.drawImage(img, currentPiece.sx, currentPiece.sy, pieceWidth, pieceHeight, mouse.x - (pieceWidth / 2), mouse.y - (pieceHeight / 2), pieceWidth, pieceHeight);
+      stage.restore();
+      document.onmousemove = updatePuzzle;
+      document.onmouseup = pieceDropped;
+    }
+}
+
+function checkPieceClicked(){
+  var i;
+  var piece;
+  for(i = 0; i< pieces.length; i++){
+    piece = pieces[i];
+    if(mouse.x < piece.xPos || mouse.x > (piece.xPos + pieceWidth) || mouse.y < piece.yPos || mouse.y > (piece.yPos + pieceHeight)){
+        //not hit
+    } else {
+      return piece;
+    }
+  }
+  return null;
+}
+
+function updatePuzzle(e) {
+  currentDropPiece = null;
+  if(e.layerX || e.layerX == 0){
+    mouse.x = e.layerX - canvas.offsetLeft;
+    mouse.y = e.layerY - canvas.offsetTop;
+  } else if (e.offsetX || e.offsetX == 0){
+    mouse.x = e.offsetX - canvas.offsetLeft;
+    mouse.y = e.offsetY - canvas.offsetTop;
+  }
+  stage.clearRect(0, 0, puzzleWidth, puzzleHeight);
+  var i;
+  var piece;
+  for(i = 0; i < pieces.length; i++){
+    piece = pieces[i];
+    if(piece == currentPiece){
+      continue;
+    }
+    stage.drawImage(img, piece.sx, piece.sy, pieceWidth, pieceHeight, piece.xPos, piece.yPos, pieceWidth, pieceHeight);
+    stage.strokeRect(piece.xPos, piece.yPos, pieceWidth, pieceHeight);
+    if(currentDropPiece == null){
+      if(mouse.x < piece.xPos || mouse.x > (piece.xPos + pieceWidth) || mouse.y < piece.yPos || mouse.y > (piece.yPos + pieceHeight)){
+        //not over
+      } else {
+        currentDropPiece = piece;
+        stage.save();
+        stage.globalAlpha = .4;
+        stage.fillStyle = PUZZLE_HOVER_TINT;
+        stage.fillRect(currentDropPiece.xPos, currentDropPiece.yPos, pieceWidth, pieceHeight);
+        stage.restore();
+      }
+    }
+  }
+  stage.save();
+  stage.globalAlpha = .6;
+  stage.drawImage(img, currentPiece.sx, currentPiece.sy, pieceWidth, pieceHeight, mouse.x - (pieceWidth / 2), mouse.y - (pieceHeight / 2), pieceWidth, pieceHeight);
+  stage.restore();
+  stage.strokeRect(mouse.x - (pieceWidth / 2), mouse.y - (pieceHeight / 2), pieceWidth, pieceHeight);
+}
+
+function pieceDropped(e) {
+  document.onmousemove = null;
+  document.onmouseup = null;
+  if(currentDropPiece != null){
+    var tmp = {xPos: currentPiece.xPos, yPos: currentPiece.yPos};
+    currentPiece.xPos = currentDropPiece.xPos;
+    currentPiece.yPos = currentDropPiece.yPos;
+    currentDropPiece.xPos = tmp.xPos;
+    currentDropPiece.yPos = tmp.yPos;
+  }
+  resetPuzzleAndCheckWin();
+}
+
+function resetPuzzleAndCheckWin() {
+  stage.clearRect(0, 0, puzzleWidth, puzzleHeight);
+  var gameWin = true;
+  var i;
+  var piece;
+  for(i = 0; i < pieces.length; i++){
+    piece = pieces[i];
+    stage.drawImage(img, piece.sx, piece.sy, pieceWidth, pieceHeight, piece.xPos, piece.yPos ,pieceWidth, pieceHeight);
+    stage.strokeRect(piece.xPos, piece.yPos, pieceWidth, pieceHeight);
+    if(piece.xPos != piece.sx || piece.yPos != piece.sy){
+      gameWin = false;
+    }
+  }
+  if(gameWin){
+    alert("Wygrana kuhfa!!!");
+  }
 }
