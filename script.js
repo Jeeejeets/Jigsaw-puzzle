@@ -210,5 +210,7 @@ function resetPuzzleAndCheckWin() {
       gameWin = false;
     }
   }
-  return gameWin;
+  if(gameWin){
+    return true;
+  }
 }
