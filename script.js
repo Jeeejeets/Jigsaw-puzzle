@@ -108,7 +108,7 @@ function shufflePuzzle() {
     stage.drawImage(img, piece.sx, piece.sy, pieceWidth, pieceHeight, xPos, yPos, pieceWidth, pieceHeight);
     // stage.strokeRect(xPos, yPos, pieceWidth,pieceHeight);
   }
-  startTheClock(PUZZLE_TIMEOUT);
+  // startTheClock(PUZZLE_TIMEOUT);
   document.onmousedown = onPuzzleClick;
 }
 
@@ -117,13 +117,8 @@ function shufflePuzzle() {
 function onPuzzleClick(e) {
 
     //takes cursor position
-    if(e.layerX || e.layerX == 0){
-      mouse.x = e.layerX - canvas.offsetLeft;
-      mouse.y = e.layerY - canvas.offsetTop;
-    } else if (e.offsetX || e.offsetX == 0){
-      mouse.x = e.offsetX - canvas.offsetLeft;
-      mouse.y = e.offsetY - canvas.offsetTop;
-    }
+    mouse.x = e.pageX - canvas.offsetLeft;
+    mouse.y = e.pageY - canvas.offsetTop;
 
     currentPiece = checkPieceClicked();
     if(currentPiece != null){
@@ -155,13 +150,8 @@ function updatePuzzle(e) {
 
   //określanie pozycji kursora
   currentDropPiece = null;
-  if(e.layerX || e.layerX == 0){
-    mouse.x = e.layerX - canvas.offsetLeft;
-    mouse.y = e.layerY - canvas.offsetTop;
-  } else if (e.offsetX || e.offsetX == 0){
-    mouse.x = e.offsetX - canvas.offsetLeft;
-    mouse.y = e.offsetY - canvas.offsetTop;
-  }
+  mouse.x = e.pageX - canvas.offsetLeft;
+  mouse.y = e.pageY - canvas.offsetTop;
 
   //Podsiwetlanie kafelka, rysowanie kafelków nieprzeciąganych od nowa
   stage.clearRect(0, 0, canvas.width, canvas.height);
@@ -248,7 +238,7 @@ function resetPuzzleAndCheckWin() {
     // stage.strokeRect(gridPiece.xPos, gridPiece.yPos, pieceWidth, pieceHeight);
     if(piece.xPos != gridPiece.xPos || piece.yPos != gridPiece.yPos){
       gameWin = false;
-      console.log("piece: " + piece.xPos + ", grid: " + gridPiece.xPos);
+      // console.log("piece: " + piece.xPos + ", grid: " + gridPiece.xPos);
     }
   }
   if(gameWin){
