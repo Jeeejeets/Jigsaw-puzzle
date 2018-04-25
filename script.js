@@ -18,6 +18,7 @@ var currentDropPiece;
 var mouse;
 var horizontalBeginning;
 var verticalBeginning;
+var clockInterval;
 
 //Declare game preparing functions
 function init(){
@@ -39,8 +40,10 @@ function setCanvas() {
   //set main puzzle canvas
   canvas = document.getElementById('ukladanka');
   stage  = canvas.getContext('2d');
-  var parentWidth = canvas.parentElement.clientWidth;
   var parentHeight = canvas.parentElement.clientHeight;
+  var parentWidth = window.getComputedStyle(canvas.parentElement);
+  var parentPadding = parseFloat(parentWidth.paddingLeft) + parseFloat(parentWidth.paddingRight);
+  parentWidth = canvas.parentElement.clientWidth - parentPadding;
   canvas.width = parentWidth;
   canvas.height = parentHeight;
   canvas.style.border = "1px solid black";
@@ -57,15 +60,11 @@ function initPuzzle() {
   currentPiece = null;
   currentDropPiece = null;
   stage.drawImage(img, 0, 0, puzzleWidth, puzzleHeight, horizontalBeginning, verticalBeginning, puzzleWidth, puzzleHeight);
-  createTitle('Click to start the puzzle');
   buildPieces();
 }
 
-function createTitle(message) {
-
-}
-
 function buildPieces() {
+  initTheClock();
   var i;
   var piece;
   var gridPiece;
@@ -90,9 +89,22 @@ function buildPieces() {
   document.onmousedown = shufflePuzzle;
 }
 
+function initTheClock() {
+  var clock = document.getElementById('puzzleTimer');
+  var time = PUZZLE_TIMEOUT;
+  var mins = Math.floor(time/60);
+  var secs = time%60;
+  if(mins < 10)
+    mins = "0" + mins;
+  if(secs < 10)
+    secs = "0" + secs;
+  clock.innerHTML = mins + ":" + secs;
+}
+
 //declare game mechanics functions
 
 function shufflePuzzle() {
+  startTheClock();
   stage.clearRect(0, 0, canvas.width, canvas.height);
   var i;
   var piece;
@@ -108,8 +120,28 @@ function shufflePuzzle() {
     stage.drawImage(img, piece.sx, piece.sy, pieceWidth, pieceHeight, xPos, yPos, pieceWidth, pieceHeight);
     // stage.strokeRect(xPos, yPos, pieceWidth,pieceHeight);
   }
-  // startTheClock(PUZZLE_TIMEOUT);
   document.onmousedown = onPuzzleClick;
+}
+
+function startTheClock() {
+  var clock = document.getElementById('puzzleTimer');
+  var time = PUZZLE_TIMEOUT;
+  clockInterval = setInterval(function(){
+    time --;
+    var mins = Math.floor(time/60);
+    var secs = time%60;
+    if(mins < 10)
+      mins = "0" + mins;
+    if(secs < 10)
+      secs = "0" + secs;
+    clock.innerHTML = mins + ":" + secs;
+    if(time < 0){
+      alert("Czas się skończył! Koniec gry! Możesz spróbować od nowa.");
+      clock.innerHTML = "0";
+      clearInterval(clockInterval);
+      init();
+    }
+  }, 1000)
 }
 
 
@@ -242,6 +274,8 @@ function resetPuzzleAndCheckWin() {
     }
   }
   if(gameWin){
-    alert('wygrana');
+    alert('wygrana! Możesz spróbować od nowa!');
+    clearInterval(clockInterval);
+    init();
   }
 }

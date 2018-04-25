@@ -12,6 +12,7 @@
         height: 98vh;
         background-color: #333;
         z-index: -10;
+        padding: 0 10px;
       }
       #ukladanka{
         z-index: 1 !important;
@@ -20,6 +21,13 @@
         z-index: 0 !important;
         position: absolute;
       }
+      #puzzleTimer{
+        width: 100%;
+        font-size: 50px;
+        text-align: center;
+        color: white;
+        font-weight: bold;
+      }
     </style>
     <script type="text/javascript" src="script.js">
 
@@ -27,6 +35,7 @@
   </head>
 
   <body onload="init();">
+    <div id="puzzleTimer"></div>
     <canvas id="guideImage"></canvas>
     <canvas id="ukladanka">
       Twoja przeglądarka nie wspiera tej treści
