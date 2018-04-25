@@ -41,9 +41,9 @@ function setCanvas() {
   canvas = document.getElementById('ukladanka');
   stage  = canvas.getContext('2d');
   var parentHeight = canvas.parentElement.clientHeight;
-  var parentWidth = window.getComputedStyle(canvas.parentElement);
-  var parentPadding = parseFloat(parentWidth.paddingLeft) + parseFloat(parentWidth.paddingRight);
-  parentWidth = canvas.parentElement.clientWidth - parentPadding;
+  var parentStyle = window.getComputedStyle(canvas.parentElement);
+  var parentPaddingX = parseFloat(parentStyle.paddingLeft) + parseFloat(parentStyle.paddingRight);
+  parentWidth = canvas.parentElement.clientWidth - parentPaddingX;
   canvas.width = parentWidth;
   canvas.height = parentHeight;
   canvas.style.border = "1px solid black";
